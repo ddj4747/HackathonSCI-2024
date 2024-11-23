@@ -7,11 +7,15 @@ public class Star : MonoBehaviour
     public enum StarState
     {
         Empty,
+        Half,
         Filled
     }
 
     [SerializeField]
     private Sprite emptyStarSprite;
+
+    [SerializeField]
+    private Sprite halfStarSprit;
 
     [SerializeField]
     private Sprite filledStarSprit;
@@ -38,5 +42,10 @@ public class Star : MonoBehaviour
         {
             spriteRenderer.sprite = filledStarSprit;
         }
+    }
+
+    public StarState GetState()
+    {
+        return starState;
     }
 }

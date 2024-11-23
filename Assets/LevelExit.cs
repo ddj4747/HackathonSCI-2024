@@ -3,7 +3,10 @@ using UnityEngine;
 public class LevelExit : MonoBehaviour
 {
     [SerializeField]
-    private string nextLevel;
+    private GameObject scorePopOut;
+
+    [SerializeField]
+    private GameObject player;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -11,7 +14,8 @@ public class LevelExit : MonoBehaviour
 
         if (gameObject.tag == "Player")
         {
-            
+            scorePopOut.SetActive(true);
+            player.SetActive(false);
         }
     }
 }
