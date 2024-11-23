@@ -1,16 +1,21 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Popout : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField]
+    private string nextLevel;
+
+    [SerializeField]
+    private string mainMenu;
+
+    public void OnExitPressed()
     {
-        
+        SceneManager.LoadSceneAsync(mainMenu);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnNextPressed()
     {
-        
+        SceneManager.LoadSceneAsync(nextLevel);
     }
 }
