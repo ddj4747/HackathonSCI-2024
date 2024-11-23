@@ -9,12 +9,17 @@ public enum SoundType
 
 public enum SoundEffect
 {
-
+    foootsteps,
+    click,
+    cofanie,
+    door,
+    skakanie
 }
 
 public enum Music
 {
-    gameSong
+    Hackathon1,
+    Hackathon2
 }
 
 

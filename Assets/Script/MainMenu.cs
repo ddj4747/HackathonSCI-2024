@@ -16,6 +16,8 @@ public class MainMenu : MonoBehaviour
     public void Start()
     {
         buttons[selectedButton].Select();
+
+        SoundManager.PlayMusic(Music.Hackathon2);
     }
 
     public void OnPlayButtonPressed()
@@ -26,5 +28,10 @@ public class MainMenu : MonoBehaviour
     public void OnExitButtonPressed()
     {
         Application.Quit();
+    }
+
+    public void OnTutoButtonPressed()
+    {
+
     }
 }
