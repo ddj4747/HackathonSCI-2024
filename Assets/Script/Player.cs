@@ -1,16 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.Collections;
-using Unity.Burst;
-using System;
-using UnityEngine.UI;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    private string currRoom;
+
     private Rigidbody2D _rigidbody2D;
     private BoxCollider2D _boxCollider2D;
 
@@ -65,6 +62,8 @@ public class Player : MonoBehaviour
             PositionHistory.Enqueue(transform.position);
             elapsed -= 0.1f;
         }
+
+        OnNew();
     }
 
     private void FixedUpdate()
@@ -88,8 +87,17 @@ public class Player : MonoBehaviour
         _inputActions.Player.Move.canceled += OnMove;
         _inputActions.Player.Jump.performed += OnJump;
         _inputActions.Player.Jump.canceled += OnJump;
-        _inputActions.Player.SpawnNew.performed += OnNew;
-        _inputActions.Player.SpawnNew.canceled += OnNew;
+    }
+
+    private void OnDestroy()
+    {
+        _inputActions.Dispose();
+    }
+
+
+    public void Die()
+    {
+        SceneManager.LoadSceneAsync(currRoom);
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -110,13 +118,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnNew(InputAction.CallbackContext context)
+    private void OnNew()
     {
-        if (context.performed)
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             PositionHistory.Clear();
         }
-        else if (context.canceled)
+        else if (Input.GetKeyUp(KeyCode.Q))
         {
             GameObject sh = playerShadow.gameObject;
 

@@ -102,11 +102,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 2c9d711f6082f0741a87283e36691463, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -175,11 +175,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ce077874f1cb844c8c0111099bbca04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
+  currRoom: 
   MaxXSpeed: 1
   JumpForce: 2
   Gravity: 9.81
   _killButtonHoldTime: 0
-  playerObject: {fileID: 916771691140945263}
+  playerShadow: {fileID: 0}
   SavePositionTime: 0.25
   MaxHistorySize: 20
+  TimeToNextPosition: 0.5
+  ReturnedBack: 0
+  Rewinding: 0
