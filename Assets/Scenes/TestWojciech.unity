@@ -295,7 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxXSpeed: 1
-  JumpForce: 5
+  JumpForce: 2
   Gravity: 9.81
 --- !u!1 &935030908
 GameObject:
