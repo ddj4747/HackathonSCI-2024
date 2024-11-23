@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
     {
         buttons[selectedButton].Select();
 
+
         SoundManager.PlayMusic(Music.Hackathon2);
     }
 

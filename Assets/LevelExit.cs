@@ -15,6 +15,7 @@ public class LevelExit : MonoBehaviour
 
         if (gameObject.tag == "Player")
         {
+            SoundManager.SaveState();
             SceneManager.LoadSceneAsync(nextLevel);
         }
     }

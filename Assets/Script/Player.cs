@@ -63,6 +63,7 @@ public class Player : MonoBehaviour
             elapsed -= 0.1f;
         }
 
+        CheckGround();
         OnNew();
     }
 
@@ -97,6 +98,7 @@ public class Player : MonoBehaviour
 
     public void Die()
     {
+        SoundManager.SaveState();
         SceneManager.LoadSceneAsync(currRoom);
     }
 
@@ -153,7 +155,7 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
-        if (_isJumping /*&& _grounded*/)
+        if (_isJumping && _grounded)
         {
             _rigidbody2D.linearVelocity = new Vector2(_rigidbody2D.linearVelocity.x, JumpForce);
         }
@@ -161,7 +163,13 @@ public class Player : MonoBehaviour
 
     private void CheckGround()
     {
-        // Tutaj sprawdź, czy gracz jest na ziemi, używając np. raycastu
+        if (_rigidbody2D.linearVelocity.y != 0)
+        {
+            _grounded = false;
+            return;
+        }
+
+        _grounded = true;
     }
 
     private void HandleMovement()

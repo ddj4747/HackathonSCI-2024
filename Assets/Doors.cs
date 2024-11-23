@@ -26,7 +26,7 @@ public class Doors : MonoBehaviour
         upDoorStartPos = upDoor.transform.position;
         downDoorStartPos = downDoor.transform.position;
 
-        SoundManager.PlayMusic(Music.Hackathon1);
+        SoundManager.PlayMusic(Music.Hackathon1, 1, false);
     }
 
     private void Update()
