@@ -1,18 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Jobs;
+using Unity.Mathematics;
+using Unity.Collections;
+using Unity.Burst;
 
 public class Player : MonoBehaviour
 {
-    private Rigidbody2D _rigidbdy2D;
-
-    public enum State
-    {
-        Enabled,
-        Disabled
-    }
-
-    public State state;
+    private Rigidbody2D _rigidbody2D;
+    private BoxCollider2D _boxCollider2D;
 
     private bool _grounded;
 
@@ -27,44 +24,48 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _killButtonHoldTime;
+    [SerializeField]
+    private GameObject playerShadow;
+    private PlayerShadow playerShadowScript;
 
-    //private <Vector2> _positionHistory = new List<Vector2>();
+    public Queue<Vector3> PositionHistory;
+    public float SavePositionTime = 0.25f;
+    private float _timeSinceLastSave = 0f;
+    public int MaxHistorySize = 20;
+
+    public float TimeToNextPosition = 0.5f;
+    private float _timerToNextPosition = 0f;
+    public bool ReturnedBack = false;
+    public bool Rewinding = false;
 
     private void Awake()
     {
-        EnableObject();
         GetComponents();
         SetInputs();
     }
 
+    private void Start()
+    {
+        OnEnable();
+    }
+
     private void Update()
     {
-        if (state == State.Enabled)
-        {
-            HandleKillTime();
-        }
-        else if (state == State.Disabled)
-        {
-            DisabledDo();
-        }
+        HandleKillTime();
+        HandleRewindTime();
+        HandleSavingPosition();
     }
 
     private void FixedUpdate()
     {
-        if (state == State.Enabled)
-        {
-            HandleMovement();
-        } 
+        HandleMovement();
     }
 
     private void GetComponents()
     {
-        _rigidbdy2D = GetComponent<Rigidbody2D>();
-    }
-
-    private void EnableObject()
-    {
-        state = State.Enabled;
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _boxCollider2D = GetComponent<BoxCollider2D>();
+        PositionHistory = new Queue<Vector3>();
     }
 
     private void SetInputs()
@@ -108,8 +109,9 @@ public class Player : MonoBehaviour
         else if (context.canceled)
         {
             _isKillButtonPressed = false;
-            SpawnNewPlayer();
-        }
+            CreateShadow();
+            Rewinding = true;
+        }playerShadow
     }
 
     private void OnEnable()
@@ -122,20 +124,6 @@ public class Player : MonoBehaviour
         _inputActions.Player.Disable();
     }
 
-    private void DisabledDo()
-    {
-        _killButtonHoldTime -= Time.deltaTime;
-
-        if (_killButtonHoldTime <= 0)
-        {
-            Die();
-        }
-        else
-        {
-            GoDark();
-        }
-    }
-
     private void HandleKillTime()
     {
         if (_isKillButtonPressed)
@@ -143,47 +131,55 @@ public class Player : MonoBehaviour
             _killButtonHoldTime += Time.deltaTime;
         }
     }
-    
-    private void SpawnNewPlayer()
-    {
-        FreezeCurrentPlayer();
 
-        //Instantiate(new Player(), new Vector3(0, 0, 0), Quaternion.identity);
+    private void HandleSavingPosition()
+    {
+        _timeSinceLastSave += Time.deltaTime;
+
+        if (_timeSinceLastSave >= SavePositionTime && _moveInput.x != 0)
+        {
+            SavePosition();
+            _timeSinceLastSave = 0f;
+        }
     }
 
-    private void FreezeCurrentPlayer()
+    private void SavePosition()
     {
-        state = State.Disabled;
-        OnDisable();
-        _rigidbdy2D.bodyType = RigidbodyType2D.Static;
+        PositionHistory.Enqueue(transform.position);
+
+        if (PositionHistory.Count >= MaxHistorySize)
+        {
+            PositionHistory.Dequeue();
+        }
     }
 
-    public void Die()
+    public void CreateShadow()
     {
-        Destroy(gameObject);
-    }
-
-    private void GoDark()
-    {
-
+        if (playerShadow != null)
+        {
+            playerShadow = Instantiate(playerShadow, transform.position, Quaternion.identity);
+            playerShadowScript = playerShadow.GetComponent<PlayerShadow>();
+            playerShadowScript.GoDie = false;
+            playerShadowScript.TimeToDie = _killButtonHoldTime;
+        }
     }
 
     private void Jump()
     {
         if (_isJumping /*&& _grounded*/)
         {
-            _rigidbdy2D.linearVelocityY = JumpForce;
+            _rigidbody2D.linearVelocity = new Vector2(_rigidbody2D.linearVelocity.x, JumpForce);
         }
     }
 
     private void CheckGround()
     {
-
+        // Tutaj sprawdź, czy gracz jest na ziemi, używając np. raycastu
     }
 
     private void HandleMovement()
     {
-        _rigidbdy2D.linearVelocity = new Vector2(_moveInput.x * MaxXSpeed, _rigidbdy2D.linearVelocityY);
+        _rigidbody2D.linearVelocity = new Vector2(_moveInput.x * MaxXSpeed, _rigidbody2D.linearVelocity.y);
 
         UpdateFacing();
     }
@@ -192,5 +188,36 @@ public class Player : MonoBehaviour
     {
         float direction = Mathf.Sign(_moveInput.x);
         transform.localScale = new Vector3(direction, 1, 1);
+    }
+
+    private void HandleRewindTime()
+    {
+        if (Rewinding)
+        {
+            int rewindCount = Mathf.FloorToInt(_killButtonHoldTime / SavePositionTime);
+            rewindCount = Mathf.Min(rewindCount, PositionHistory.Count); 
+
+            if (rewindCount > 0)
+            {
+                for (int i = 0; i < rewindCount; i++)
+                {
+                    Vector3 currPosition = Vector3.zero;
+                    if (PositionHistory.Count > 0)
+                    {
+                        currPosition = PositionHistory.Peek();
+                        transform.position = currPosition;
+                        PositionHistory.Dequeue();
+                    }
+                    if (transform.position == currPosition)
+                    {
+                        Rewinding = false;
+                        playerShadowScript.GoDie = true;
+                        break;
+                    }
+                }
+            }
+            
+        }
+        
     }
 }
