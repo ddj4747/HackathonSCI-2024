@@ -258,10 +258,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.19981238
-    y: 0.06082725
-    width: 0.60037524
-    height: 0.8759124
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2407,11 +2407,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8197369223164763509, guid: 392ede9e1f79a8040b84253be8bb946d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.0739
+      value: -0.083
       objectReference: {fileID: 0}
     - target: {fileID: 8197369223164763509, guid: 392ede9e1f79a8040b84253be8bb946d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.6363
+      value: -0.629
       objectReference: {fileID: 0}
     - target: {fileID: 8197369223164763509, guid: 392ede9e1f79a8040b84253be8bb946d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2997,6 +2997,14 @@ PrefabInstance:
     - target: {fileID: 4067693357334095473, guid: b2834212815f0974fb0482d4244c06d9, type: 3}
       propertyPath: m_Name
       value: LevelSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 9064345364645805869, guid: b2834212815f0974fb0482d4244c06d9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9064345364645805869, guid: b2834212815f0974fb0482d4244c06d9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.505
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
