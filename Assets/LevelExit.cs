@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelExit : MonoBehaviour
 {
     [SerializeField]
-    private GameObject scorePopOut;
+    private string nextLevel;
 
     [SerializeField]
     private GameObject player;
@@ -14,8 +15,7 @@ public class LevelExit : MonoBehaviour
 
         if (gameObject.tag == "Player")
         {
-            scorePopOut.SetActive(true);
-            player.SetActive(false);
+            SceneManager.LoadSceneAsync(nextLevel);
         }
     }
 }
