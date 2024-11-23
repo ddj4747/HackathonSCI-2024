@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,42 +14,47 @@ public class Player : MonoBehaviour
 
     public State state;
 
-    //private bool _freezed = false;
-
     private bool _grounded;
 
     private InputSystem_Actions _inputActions;
     private Vector2 _moveInput;
     private bool _isJumping = false;
+    private bool _isKillButtonPressed = false;
 
     public float MaxXSpeed = 1.0f;
     public float JumpForce = 2.0f;
     public float Gravity = 9.81f;
 
-    private float _timeTillDie;
+    [SerializeField]
+    private float _killButtonHoldTime;
 
+    //private <Vector2> _positionHistory = new List<Vector2>();
 
     private void Awake()
     {
-        TurnOn();
+        EnableObject();
         GetComponents();
         SetInputs();
     }
 
     private void Update()
     {
-
+        if (state == State.Enabled)
+        {
+            HandleKillTime();
+        }
+        else if (state == State.Disabled)
+        {
+            DisabledDo();
+        }
     }
 
     private void FixedUpdate()
     {
-        if(state == State.Enabled)
+        if (state == State.Enabled)
         {
             HandleMovement();
-        } else if(state == State.Disabled)
-        {
-            return;
-        }
+        } 
     }
 
     private void GetComponents()
@@ -56,7 +62,7 @@ public class Player : MonoBehaviour
         _rigidbdy2D = GetComponent<Rigidbody2D>();
     }
 
-    private void TurnOn()
+    private void EnableObject()
     {
         state = State.Enabled;
     }
@@ -81,12 +87,12 @@ public class Player : MonoBehaviour
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if (context.performed)
         {
             _isJumping = true;
             Jump();
         }
-        else
+        else if (context.canceled)
         {
             _isJumping = false;
         }
@@ -96,6 +102,12 @@ public class Player : MonoBehaviour
     {
         if (context.performed)
         {
+            _isKillButtonPressed = true;
+            _killButtonHoldTime = 0f;
+        }
+        else if (context.canceled)
+        {
+            _isKillButtonPressed = false;
             SpawnNewPlayer();
         }
     }
@@ -110,24 +122,33 @@ public class Player : MonoBehaviour
         _inputActions.Player.Disable();
     }
 
-    private void Jump()
+    private void DisabledDo()
     {
-        if (_isJumping /*&& _grounded*/)
+        _killButtonHoldTime -= Time.deltaTime;
+
+        if (_killButtonHoldTime <= 0)
         {
-            _rigidbdy2D.linearVelocityY = JumpForce;
+            Die();
+        }
+        else
+        {
+            GoDark();
         }
     }
 
-    private void HandleMovement()
+    private void HandleKillTime()
     {
-        _rigidbdy2D.linearVelocity = new Vector2(_moveInput.x * MaxXSpeed, _rigidbdy2D.linearVelocityY);
+        if (_isKillButtonPressed)
+        {
+            _killButtonHoldTime += Time.deltaTime;
+        }
     }
-
+    
     private void SpawnNewPlayer()
     {
-        //Instantiate(new Player(), new Vector3(0, 0, 0), Quaternion.identity);
-
         FreezeCurrentPlayer();
+
+        //Instantiate(new Player(), new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     private void FreezeCurrentPlayer()
@@ -137,5 +158,39 @@ public class Player : MonoBehaviour
         _rigidbdy2D.bodyType = RigidbodyType2D.Static;
     }
 
-    
+    public void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    private void GoDark()
+    {
+
+    }
+
+    private void Jump()
+    {
+        if (_isJumping /*&& _grounded*/)
+        {
+            _rigidbdy2D.linearVelocityY = JumpForce;
+        }
+    }
+
+    private void CheckGround()
+    {
+
+    }
+
+    private void HandleMovement()
+    {
+        _rigidbdy2D.linearVelocity = new Vector2(_moveInput.x * MaxXSpeed, _rigidbdy2D.linearVelocityY);
+
+        UpdateFacing();
+    }
+
+    private void UpdateFacing()
+    {
+        float direction = Mathf.Sign(_moveInput.x);
+        transform.localScale = new Vector3(direction, 1, 1);
+    }
 }
