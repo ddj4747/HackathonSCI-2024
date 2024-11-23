@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour
 
     public void Start()
     {
+
         buttons[selectedButton].Select();
     }
 
