@@ -13,7 +13,7 @@ public class Spike : MonoBehaviour
         }
         else if (gameObject.tag == "destuctable_object")
         {
-
+            Destroy(gameObject);
         }
     }
 }
