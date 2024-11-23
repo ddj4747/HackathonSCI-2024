@@ -9,7 +9,7 @@ public class Spike : MonoBehaviour
 
         if (gameObject.tag == "Player")
         {
-            
+            gameObject.ConvertTo<Player>().Die();
         }
         else if (gameObject.tag == "destuctable_object")
         {
