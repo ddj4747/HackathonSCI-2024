@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 
     public State state;
 
-    private bool _grounded;
+    public bool _grounded;
 
     private InputSystem_Actions _inputActions;
     private Vector2 _moveInput;
@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     private float _killButtonHoldTime;
 
     //private <Vector2> _positionHistory = new List<Vector2>();
+
 
     private void Awake()
     {
@@ -178,7 +179,7 @@ public class Player : MonoBehaviour
 
     private void CheckGround()
     {
-
+        
     }
 
     private void HandleMovement()
