@@ -18,8 +18,6 @@ public class MainMenu : MonoBehaviour
         buttons[selectedButton].Select();
     }
 
-
-
     public void OnPlayButtonPressed()
     {
         SceneManager.LoadSceneAsync(playScene);
