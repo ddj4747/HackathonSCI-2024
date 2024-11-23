@@ -583,7 +583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4ac61c423ab4644db61368113adebd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playScene: TestWojciech
+  playScene: Level1
   buttons:
   - {fileID: 647240494}
   - {fileID: 1451825449}
