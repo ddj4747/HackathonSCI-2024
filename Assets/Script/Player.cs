@@ -5,6 +5,9 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Burst;
+using System;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
@@ -38,6 +41,8 @@ public class Player : MonoBehaviour
     public bool ReturnedBack = false;
     public bool Rewinding = false;
 
+    private Queue<Vector3> _positionHistory;
+
     private void Awake()
     {
         GetComponents();
@@ -49,11 +54,17 @@ public class Player : MonoBehaviour
         OnEnable();
     }
 
+    private float elapsed = 0f;
+
     private void Update()
     {
-        HandleKillTime();
-        HandleRewindTime();
-        HandleSavingPosition();
+        elapsed += Time.deltaTime; 
+
+        if (elapsed > 0.05f)
+        {
+            PositionHistory.Enqueue(transform.position);
+            elapsed -= 0.1f;
+        }
     }
 
     private void FixedUpdate()
@@ -103,15 +114,21 @@ public class Player : MonoBehaviour
     {
         if (context.performed)
         {
-            _isKillButtonPressed = true;
-            _killButtonHoldTime = 0f;
+            PositionHistory.Clear();
         }
         else if (context.canceled)
         {
-            _isKillButtonPressed = false;
-            CreateShadow();
-            Rewinding = true;
-        }playerShadow
+            GameObject sh = playerShadow.gameObject;
+
+            Instantiate(sh, transform.position, Quaternion.identity);
+
+            PlayerShadow cp = sh.GetComponent<PlayerShadow>();
+
+            cp.TimeToDie = 5;
+            cp.GoDie = true;
+
+            transform.position = PositionHistory.Dequeue();
+        }
     }
 
     private void OnEnable()
@@ -124,45 +141,7 @@ public class Player : MonoBehaviour
         _inputActions.Player.Disable();
     }
 
-    private void HandleKillTime()
-    {
-        if (_isKillButtonPressed)
-        {
-            _killButtonHoldTime += Time.deltaTime;
-        }
-    }
 
-    private void HandleSavingPosition()
-    {
-        _timeSinceLastSave += Time.deltaTime;
-
-        if (_timeSinceLastSave >= SavePositionTime && _moveInput.x != 0)
-        {
-            SavePosition();
-            _timeSinceLastSave = 0f;
-        }
-    }
-
-    private void SavePosition()
-    {
-        PositionHistory.Enqueue(transform.position);
-
-        if (PositionHistory.Count >= MaxHistorySize)
-        {
-            PositionHistory.Dequeue();
-        }
-    }
-
-    public void CreateShadow()
-    {
-        if (playerShadow != null)
-        {
-            playerShadow = Instantiate(playerShadow, transform.position, Quaternion.identity);
-            playerShadowScript = playerShadow.GetComponent<PlayerShadow>();
-            playerShadowScript.GoDie = false;
-            playerShadowScript.TimeToDie = _killButtonHoldTime;
-        }
-    }
 
     private void Jump()
     {
@@ -190,34 +169,4 @@ public class Player : MonoBehaviour
         transform.localScale = new Vector3(direction, 1, 1);
     }
 
-    private void HandleRewindTime()
-    {
-        if (Rewinding)
-        {
-            int rewindCount = Mathf.FloorToInt(_killButtonHoldTime / SavePositionTime);
-            rewindCount = Mathf.Min(rewindCount, PositionHistory.Count); 
-
-            if (rewindCount > 0)
-            {
-                for (int i = 0; i < rewindCount; i++)
-                {
-                    Vector3 currPosition = Vector3.zero;
-                    if (PositionHistory.Count > 0)
-                    {
-                        currPosition = PositionHistory.Peek();
-                        transform.position = currPosition;
-                        PositionHistory.Dequeue();
-                    }
-                    if (transform.position == currPosition)
-                    {
-                        Rewinding = false;
-                        playerShadowScript.GoDie = true;
-                        break;
-                    }
-                }
-            }
-            
-        }
-        
-    }
 }

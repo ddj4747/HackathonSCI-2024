@@ -8,12 +8,11 @@ public class PlayerShadow : MonoBehaviour
     public bool GoDie = false;
 
     private void Awake()
-    {
+    { 
         BodyCollider = GetComponent<BoxCollider2D>();
     }
     void Start()
     {
-        BodyCollider.enabled = false;
     }
 
     private void Update()
@@ -23,18 +22,15 @@ public class PlayerShadow : MonoBehaviour
 
     private void Do()
     {
-        if(GoDie)
-        {
-            TimeToDie -= Time.deltaTime;
+        TimeToDie -= Time.deltaTime;
 
-            if (TimeToDie <= 0)
-            {
-                Die();
-            }
-            else
-            {
-                GoDark();
-            }
+        if (TimeToDie <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            GoDark();
         }
     }
 
