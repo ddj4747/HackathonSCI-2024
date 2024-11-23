@@ -173,6 +173,11 @@ public class Player : MonoBehaviour
 
     private void UpdateFacing()
     {
+        if (_moveInput.x == 0)
+        {
+            return;
+        }
+
         float direction = Mathf.Sign(_moveInput.x);
         transform.localScale = new Vector3(direction, 1, 1);
     }

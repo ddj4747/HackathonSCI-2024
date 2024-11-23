@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8496258645381110888}
   - component: {fileID: 7080612870225718890}
   - component: {fileID: 4194602115648325716}
+  - component: {fileID: 6349027883662695066}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -176,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currRoom: 
-  MaxXSpeed: 1
+  MaxXSpeed: 0.7
   JumpForce: 2
   Gravity: 9.81
   _killButtonHoldTime: 0
@@ -186,3 +187,25 @@ MonoBehaviour:
   TimeToNextPosition: 0.5
   ReturnedBack: 0
   Rewinding: 0
+--- !u!95 &6349027883662695066
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916771691140945263}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3ff9e775c0690bb43b1fd15bd08439eb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
